@@ -90,9 +90,15 @@ if st.button("🔄 Fetch Latest Steel Data"):
     st.dataframe(df.tail())
 
 if st.button("🧠 Train LSTM Model"):
-    df = pd.read_csv("data/steel_data.csv")
-    train_lstm(df)
-    st.success("✅ Model trained and saved!")
+    if os.path.exists("data/steel_data.csv"):
+        df = pd.read_csv("data/steel_data.csv")
+        if not df.empty:
+            train_lstm(df)
+            st.success("✅ Model trained and saved!")
+        else:
+            st.error("Steel data file is empty. Please fetch data first.")
+    else:
+        st.error("Please fetch steel data first.")
 
 if st.button("📅 Predict Tomorrow’s Price"):
     predicted = predict_next_day()
@@ -104,4 +110,5 @@ if os.path.exists("predictions.csv"):
     st.subheader("📜 Past Predictions")
     pred_df = pd.read_csv("predictions.csv")
     st.line_chart(pred_df.set_index("Date")["Predicted_Price"])
+
     st.dataframe(pred_df.tail())
